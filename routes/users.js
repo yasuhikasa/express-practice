@@ -74,5 +74,49 @@ router.get('/get-total-users', function(req, res) {
   });
 });
 
+// 編集用に個別のユーザーを取得するエンドポイントを追加します。
+router.get('/get-user/:id', function(req, res) {
+  const id = req.params.id;
+
+  const query = 'SELECT * FROM users WHERE id = ?';
+
+  connection.query(query, [id], function(err, result) {
+    if (err) {
+      console.error('Error getting user from database:', err);
+      res.status(500).send('Error getting user from database');
+      return;
+    }
+
+    if (result.length === 0) {
+      res.status(404).send('No user found with the given ID');
+      return;
+    }
+
+    res.status(200).json(result[0]);
+  });
+});
+
+router.put('/edit-user/:id', function(req, res) {
+  const id = req.params.id;
+  const userUpdates = req.body;
+
+  const query = 'UPDATE users SET ? WHERE id = ?';
+
+  connection.query(query, [userUpdates, id], function(err, result) {
+    if (err) {
+      console.error('Error updating data in database:', err);
+      res.status(500).send('Error updating data in database');
+      return;
+    }
+
+    if (result.affectedRows === 0) {
+      res.status(404).send('No user found with the given ID');
+      return;
+    }
+
+    res.status(200).send('User successfully updated');
+  });
+});
+
 
 module.exports = router;
