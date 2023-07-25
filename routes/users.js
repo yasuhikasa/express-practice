@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const mysql = require('mysql');
 
-
 // MySQLとの接続を設定する
 const connection = mysql.createConnection({
   host: '127.0.0.1',
@@ -32,6 +31,21 @@ router.post('/create-user', function(req, res) {
     }
 
     res.status(200).send('User successfully created');
+  });
+});
+
+// GET リクエストの処理を追加します。
+router.get('/get-users', function(req, res) {
+  const query = 'SELECT * FROM users';
+
+  connection.query(query, function(err, result) {
+    if (err) {
+      console.error('Error getting data from database:', err);
+      res.status(500).send('Error getting data from database');
+      return;
+    }
+
+    res.status(200).json(result);
   });
 });
 
