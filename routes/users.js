@@ -118,5 +118,26 @@ router.put('/edit-user/:id', function(req, res) {
   });
 });
 
+router.delete('/delete-user/:id', function(req, res) {
+  const id = req.params.id;
+
+  const query = 'DELETE FROM users WHERE id = ?';
+
+  connection.query(query, [id], function(err, result) {
+    if (err) {
+      console.error('Error deleting user from database:', err);
+      res.status(500).send('Error deleting user from database');
+      return;
+    }
+
+    if (result.affectedRows === 0) {
+      res.status(404).send('No user found with the given ID');
+      return;
+    }
+
+    res.status(200).send('User successfully deleted');
+  });
+});
+
 
 module.exports = router;
